@@ -1,0 +1,85 @@
+name: Build and Deploy .NET Framework App to IIS
+
+on:
+  workflow_dispatch:
+    inputs:
+      project-name:
+        description: 'Project name'
+        required: true
+      package-type:
+        type: choice
+        description: 'Package type'
+        options:
+          - artifact
+          - nuget        
+        required: true
+        default: 'artifact'
+      
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Get repository name
+        id: get-repo-name
+        run: |
+          $repoName = $Env:GITHUB_REPOSITORY.Split('/')[1]
+          "repoName=$repoName" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+      - name: Install NuGet dependencies
+        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj
+
+      - name: Locate MSBuild
+        id: locate-msbuild
+        run: |
+          $msbuildPath = (vswhere -latest -products * -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe')
+          "msbuildPath=$msbuildPath" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+      - name: Build solution
+        run: |
+          $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj' /p:Configuration=Release
+
+      - name: Locate VSTest
+        id: locate-vstest
+        run: |
+            $vstestpath = (vswhere -latest -products * -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core -find Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe)
+            "vstestpath=$vstestpath" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+      - name: Run tests
+        run: |
+          $vstest = '${{ steps.locate-vstest.outputs.vstestpath }}'
+          & "$vstest" **/*.Tests.dll --logger:trx
+        continue-on-error: true
+
+      - name: Publish artifact
+        id: artifact-name
+        if: ${{ inputs.package-type == 'artifact' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: WindowsFormsApp
+          path: '**/bin/Release/*'
+          retention-days: 7
+
+      - name: Download artifact
+        if: ${{ inputs.package-type == 'artifact' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: WindowsFormsApp
+
+      - name: Generate NuGet package
+        if: ${{ inputs.package-type == 'nuget' }}
+        run: |
+          nuget pack ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj -Properties Configuration=Release -OutputDirectory ./nupkgs -Version 1.5.0
+
+      - name: Publish to GitHub NuGet package
+        if: ${{ inputs.package-type == 'nuget' }}
+        run: |
+          $packageDirectory = "D:\a\${{ steps.get-repo-name.outputs.repoName }}\${{ steps.get-repo-name.outputs.repoName }}\nupkgs\"
+          dotnet nuget push $packageDirectory --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key "${{ secrets.TOKEN_GENERIC }}"
