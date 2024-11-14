@@ -110,4 +110,4 @@ jobs:
           # Reinicia o aplicativo no IIS
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "./publish", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "./WebApplication", "C:\inetpub\wwwroot\WebApplication"
