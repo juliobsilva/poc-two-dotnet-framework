@@ -104,9 +104,10 @@ jobs:
         $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+        $webapplication = "C:\github\workspace\$GITHUB_REPOSITORY\$env:WebApplication"
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "./WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList $webapplication, "C:\inetpub\wwwroot\WebApplication"
