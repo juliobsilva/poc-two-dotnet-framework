@@ -63,7 +63,7 @@ jobs:
         if: ${{ inputs.package-type == 'artifact' }}
         uses: actions/upload-artifact@v4
         with:
-          name: WindowsFormsApp
+          name: ${{ inputs.project-name }}
           path: '**/bin/Release/*'
           retention-days: 7
 
@@ -71,7 +71,7 @@ jobs:
         if: ${{ inputs.package-type == 'artifact' }}
         uses: actions/download-artifact@v4
         with:
-          name: WindowsFormsApp
+          name: ${{ inputs.project-name }}
 
       - name: Generate NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
@@ -83,3 +83,31 @@ jobs:
         run: |
           $packageDirectory = "D:\a\${{ steps.get-repo-name.outputs.repoName }}\${{ steps.get-repo-name.outputs.repoName }}\nupkgs\"
           dotnet nuget push $packageDirectory --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key "${{ secrets.TOKEN_GENERIC }}"
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ inputs.project-name }}
+
+    - name: Deploy to IIS server
+      env:
+        IIS_SERVER: ${{ secrets.IIS_SERVER }}
+        IIS_USER: ${{ secrets.IIS_USER }}
+        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+      run: |
+        Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
+        $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
+        Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
+          param ($sourcePath, $destinationPath)
+          # Copia arquivos para o servidor IIS
+          Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
+          # Reinicia o aplicativo no IIS
+          Import-Module WebAdministration
+          Restart-WebAppPool -Name "WebAppPool"
+        } -ArgumentList "./publish", "C:\inetpub\wwwroot\WebApplication"
