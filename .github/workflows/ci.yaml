@@ -96,9 +96,9 @@ jobs:
 
     - name: Deploy to IIS server
       env:
-        IIS_SERVER: ${{ secrets.IIS_SERVER }}
-        IIS_USER: ${{ secrets.IIS_USER }}
-        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+        IIS_SERVER: "13.92.253.18"
+        IIS_USER: "juliobsilva"
+        IIS_PASSWORD: "jlo.123456789"
       run: |
         Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
         $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
