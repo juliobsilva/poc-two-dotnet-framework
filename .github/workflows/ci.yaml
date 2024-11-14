@@ -103,12 +103,10 @@ jobs:
         Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
         $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
-        Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "13.92.253.18" -Force
+        Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
-          # Copia arquivos para o servidor IIS
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
-          # Reinicia o aplicativo no IIS
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
         } -ArgumentList "./WebApplication", "C:\inetpub\wwwroot\WebApplication"
