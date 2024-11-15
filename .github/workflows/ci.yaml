@@ -93,6 +93,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.project-name }}
+        path: C:\build\artifacts
 
     - name: List downloaded artifacts
       run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
@@ -116,4 +117,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "C:\WebApplication\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "C:\build\artifacts", "C:\inetpub\wwwroot\WebApplication"
