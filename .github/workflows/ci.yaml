@@ -92,8 +92,7 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: ${{ inputs.project-name }}
-        path: C:\   
+        name: ${{ inputs.project-name }} 
 
     - name: Deploy to IIS server
       env:
@@ -114,4 +113,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "$env:GITHUB_WORKSPACE\WebApplication", "C:\inetpub\wwwroot\WebApplication"
