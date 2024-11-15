@@ -106,8 +106,7 @@ jobs:
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
         Get-ChildItem -Path "$env:GITHUB_WORKSPACE"
         Write-Output "Current Directory: $env:GITHUB_WORKSPACE"
-        Get-ChildItem
-        pwd
+        
         # Cria uma sessão remota
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
@@ -115,8 +114,10 @@ jobs:
         Copy-Item -Path "$env:GITHUB_WORKSPACE\WebApplication" -Destination "C:\WebApplication" -ToSession $session -Recurse
 
         # Executa os comandos remotamente
-        Invoke-Command -Session $session -ScriptBlock {
-            param ($destinationPath)
-            Import-Module WebAdministration
-            Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "C:\inetpub\wwwroot\WebApplication"
+        Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
+          param ($sourcePath, $destinationPath)
+          Copy-Item -Path $using:sourcePath -Destination $destinationPath -Recurse -Force
+          Import-Module WebAdministration
+          Restart-WebAppPool -Name "WebAppPool"
+        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+
