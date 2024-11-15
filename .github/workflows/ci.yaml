@@ -94,9 +94,6 @@ jobs:
       with:
         name: ${{ inputs.project-name }}
 
-    - name: Set up PowerShell
-      uses: actions/setup-powershell@v2
-
     - name: List downloaded artifacts
       run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
 
