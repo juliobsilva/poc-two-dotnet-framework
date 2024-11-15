@@ -95,11 +95,7 @@ jobs:
         name: ${{ inputs.project-name }}
 
     - name: List downloaded artifacts
-      run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"
-
-    - name: List directory after downloading artifacts
-      run: Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Recurse
-    
+      run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
 
     - name: Deploy to IIS server
       env:
@@ -111,6 +107,8 @@ jobs:
         $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+        Get-ChildItem -Path "$env:GITHUB_WORKSPACE"
+        Write-Output "Current Directory: $env:GITHUB_WORKSPACE"
         Get-ChildItem
         pwd
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
@@ -118,4 +116,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication, "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "$env:GITHUB_WORKSPACE\WebApplication", "C:\inetpub\wwwroot\WebApplication"
