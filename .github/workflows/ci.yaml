@@ -97,6 +97,10 @@ jobs:
     - name: List downloaded artifacts
       run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"
 
+    - name: List directory after downloading artifacts
+      run: Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Recurse
+    
+
     - name: Deploy to IIS server
       env:
         IIS_SERVER: "13.92.253.18"
