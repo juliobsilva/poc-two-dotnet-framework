@@ -114,4 +114,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication, "C:\inetpub\wwwroot\WebApplication"
