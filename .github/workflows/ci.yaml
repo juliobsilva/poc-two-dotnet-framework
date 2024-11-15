@@ -93,10 +93,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.project-name }}
-        path: C:\build\artifacts
-
-    - name: List downloaded artifacts
-      run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
+        path: C:\build\artifacts   
 
     - name: Deploy to IIS server
       env:
