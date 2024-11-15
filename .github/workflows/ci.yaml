@@ -93,7 +93,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.project-name }}
-        path: C:\build\artifacts   
+        path: C:\   
 
     - name: Deploy to IIS server
       env:
@@ -114,4 +114,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "C:\build\artifacts", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
