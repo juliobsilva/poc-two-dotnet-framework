@@ -97,37 +97,23 @@ jobs:
     - name: List downloaded artifacts
       run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
 
-    - name: Install required PowerShell modules
-      run: |
-        Install-Module -Name PSSession -Force -Scope CurrentUser
-        Install-Module -Name PSRemote -Force -Scope CurrentUser
-
     - name: Deploy to IIS server
       env:
-        IIS_SERVER: ${{ secrets.IIS_SERVER }}
-        IIS_USER: ${{ secrets.IIS_USER }}
-        IIS_PASSWORD: ${{ secrets.IIS_PASSWORD }}
+        IIS_SERVER: "13.92.253.18"
+        IIS_USER: "juliobsilva"
+        IIS_PASSWORD: "jlo.123456789"
       run: |
-        $server = $env:IIS_SERVER
-        $user = $env:IIS_USER
-        $password = $env:IIS_PASSWORD
-        $sourceFolder = "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"
-        $targetFolder = "C:\inetpub\wwwroot\WebApplication"
-        
-        # Create a secure password
-        $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-        $credential = New-Object System.Management.Automation.PSCredential ($user, $securePassword)
-
-        # Establish remote session and copy files
-        $session = New-PSSession -ComputerName $server -Credential $credential
-        
-        # Copy the build files to the IIS folder
-        Copy-Item -Path $sourceFolder -Destination $targetFolder -Recurse -ToSession $session
-
-        # Restart IIS (you might need to adjust this depending on como reiniciar o IIS)
-        Invoke-Command -Session $session -ScriptBlock {
-          iisreset
-        }
-
-        # Close the session
-        Remove-PSSession -Session $session
+        Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
+        $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
+        Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+        Get-ChildItem -Path "$env:GITHUB_WORKSPACE"
+        Write-Output "Current Directory: $env:GITHUB_WORKSPACE"
+        Get-ChildItem
+        pwd
+        Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
+          param ($sourcePath, $destinationPath)
+          Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
+          Import-Module WebAdministration
+          Restart-WebAppPool -Name "WebAppPool"
+        } -ArgumentList "$env:GITHUB_WORKSPACE\WebApplication", "C:\inetpub\wwwroot\WebApplication"
