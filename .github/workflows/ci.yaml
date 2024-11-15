@@ -117,4 +117,4 @@ jobs:
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "$env:GITHUB_WORKSPACE\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
