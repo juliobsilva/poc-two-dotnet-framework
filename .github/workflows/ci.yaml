@@ -100,33 +100,15 @@ jobs:
         IIS_USER: "juliobsilva"
         IIS_PASSWORD: "jlo.123456789"
       run: |
-        # Baixar o artefato para o diretório padrão
-        $artifactPath = "C:\github\workspace\$GITHUB_REPOSITORY\${{ inputs.project-name }}"
-
-        # Criar credenciais
+        Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
         $password = ConvertTo-SecureString $env:IIS_PASSWORD -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ($env:IIS_USER, $password)
-
-        # Configurar TrustedHosts
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
-
-        Get-Location
-
-        # Conectar ao servidor IIS e fazer o deploy
+        Get-ChildItem
+        pwd
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
-          
-          # Verificar se o diretório de destino existe, caso contrário, criar
-          if (-not (Test-Path $destinationPath)) {
-            New-Item -Path $destinationPath -ItemType Directory
-          }
-
-          # Copiar os arquivos do artefato para o IIS
           Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
-
-          # Importar módulo WebAdministration
           Import-Module WebAdministration
-
-          # Reiniciar o pool de aplicativos
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList $artifactPath, "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication", "C:\inetpub\wwwroot\WebApplication"
