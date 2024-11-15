@@ -110,6 +110,8 @@ jobs:
         # Configurar TrustedHosts
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
 
+        Get-Location
+
         # Conectar ao servidor IIS e fazer o deploy
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
