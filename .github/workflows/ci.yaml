@@ -115,7 +115,7 @@ jobs:
         $user = $env:IIS_USER
         $password = $env:IIS_PASSWORD
         $sourceFolder = "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"
-        $targetFolder = "C:\inetpub\wwwroot\yourapp"
+        $targetFolder = "C:\inetpub\wwwroot\WebApplication"
         
         # Create a secure password
         $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
