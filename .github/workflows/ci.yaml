@@ -93,7 +93,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.project-name }}
-        path: "C:\WebApplication"
 
     - name: List downloaded artifacts
       run: Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"    
