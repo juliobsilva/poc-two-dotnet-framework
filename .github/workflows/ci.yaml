@@ -128,5 +128,5 @@ jobs:
           # Importa o módulo do IIS e reinicia o app pool
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
-        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
+        } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\"
 
