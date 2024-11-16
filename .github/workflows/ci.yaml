@@ -111,12 +111,21 @@ jobs:
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
         # Copia os arquivos para o servidor remoto
-        Copy-Item -Path "$env:GITHUB_WORKSPACE\WebApplication" -Destination "C:\WebApplication" -ToSession $session -Recurse
+        # Copy-Item -Path "$env:GITHUB_WORKSPACE\WebApplication" -Destination "C:\WebApplication" -ToSession $session -Recurse
 
         # Executa os comandos remotamente
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
-          Copy-Item -Path $using:sourcePath -Destination $destinationPath -Recurse -Force
+          
+          # Garante que o diretório de destino existe
+          if (!(Test-Path -Path $destinationPath)) {
+              New-Item -ItemType Directory -Path $destinationPath -Force
+          }
+
+          # Copia os arquivos, sobrescrevendo apenas os necessários
+          Copy-Item -Path $sourcePath\* -Destination $destinationPath -Recurse -Force
+
+          # Importa o módulo do IIS e reinicia o app pool
           Import-Module WebAdministration
           Restart-WebAppPool -Name "WebAppPool"
         } -ArgumentList "C:\WebApplication", "C:\inetpub\wwwroot\WebApplication"
