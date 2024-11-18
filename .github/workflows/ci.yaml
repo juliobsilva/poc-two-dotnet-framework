@@ -48,7 +48,8 @@ jobs:
 
       - name: Publish the application
         run: |
-          "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+          $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
 
       - name: Locate VSTest
         id: locate-vstest
