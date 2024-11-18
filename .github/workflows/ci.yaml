@@ -44,7 +44,7 @@ jobs:
       - name: Build solution
         run: |
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
-          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.csproj' /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.csproj' /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishDir="$env:GITHUB_WORKSPACE"
 
       - name: Locate VSTest
         id: locate-vstest
