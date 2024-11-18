@@ -91,7 +91,7 @@ jobs:
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: artifact 
+        name: WebApplication 
 
     - name: Deploy to IIS server
       env:
