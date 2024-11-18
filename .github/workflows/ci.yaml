@@ -33,7 +33,7 @@ jobs:
           "repoName=$repoName" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
 
       - name: Install NuGet dependencies
-        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj
+        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.sln
 
       - name: Locate MSBuild
         id: locate-msbuild
@@ -44,7 +44,7 @@ jobs:
       - name: Build solution
         run: |
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
-          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj' /p:Configuration=Release
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release
 
       - name: Locate VSTest
         id: locate-vstest
@@ -70,7 +70,7 @@ jobs:
       - name: Generate NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
         run: |
-          nuget pack ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.fsproj -Properties Configuration=Release -OutputDirectory ./nupkgs -Version 1.5.0
+          nuget pack ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.sln -Properties Configuration=Release -OutputDirectory ./nupkgs -Version 1.5.0
 
       - name: Publish to GitHub NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
