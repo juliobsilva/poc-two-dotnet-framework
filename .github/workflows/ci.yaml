@@ -46,12 +46,6 @@ jobs:
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
           & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release
 
-      - name: Publish the application
-        run: |
-          $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
-          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishDir="C:\WebApplication"
-          Get-ChildItem -Path C:\ -File
-
       - name: Locate VSTest
         id: locate-vstest
         run: |
@@ -106,7 +100,7 @@ jobs:
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
         Get-ChildItem -Path "$env:GITHUB_WORKSPACE"
         Write-Output "Current Directory: $env:GITHUB_WORKSPACE"
-                
+
         # Cria uma sessão remota
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
