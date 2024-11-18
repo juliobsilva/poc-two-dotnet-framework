@@ -50,6 +50,7 @@ jobs:
         run: |
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
           & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln'  /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishDir="C:\WebApplication"
+          Get-ChildItem -Path C:\ -File
 
       - name: Locate VSTest
         id: locate-vstest
