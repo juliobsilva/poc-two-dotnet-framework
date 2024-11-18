@@ -33,7 +33,7 @@ jobs:
           "repoName=$repoName" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
 
       - name: Install NuGet dependencies
-        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.csproj
+        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}.sln
 
       - name: Locate MSBuild
         id: locate-msbuild
@@ -44,7 +44,7 @@ jobs:
       - name: Build solution
         run: |
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
-          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.csproj' /p:Configuration=Release
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release
 
       - name: Locate VSTest
         id: locate-vstest
