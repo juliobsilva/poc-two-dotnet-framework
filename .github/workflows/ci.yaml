@@ -70,7 +70,6 @@ jobs:
         with:
           name: WebApplication
           path: 'WebApplication\obj\Release\Package\PackageTmp\*'
-          retention-days: 7
 
       - name: Generate NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
