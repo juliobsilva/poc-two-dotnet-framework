@@ -106,9 +106,7 @@ jobs:
         Set-Item -Path WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
         Get-ChildItem -Path "$env:GITHUB_WORKSPACE"
         Write-Output "Current Directory: $env:GITHUB_WORKSPACE"
-
-        Get-ChildItem -Path "D:\a\poc-two-dotnet-framework\poc-two-dotnet-framework\WebApplication"
-        
+                
         # Cria uma sessão remota
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
