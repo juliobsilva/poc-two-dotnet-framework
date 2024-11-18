@@ -33,7 +33,7 @@ jobs:
           "repoName=$repoName" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
 
       - name: Install NuGet dependencies
-        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}.csproj
+        run: nuget restore ${{ inputs.project-name }}/${{ inputs.project-name }}/${{ inputs.project-name }}.csproj
 
       - name: Locate MSBuild
         id: locate-msbuild
