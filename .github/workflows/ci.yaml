@@ -46,6 +46,10 @@ jobs:
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
           & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release
 
+      - name: Publish the application
+        run: |
+          "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+
       - name: Locate VSTest
         id: locate-vstest
         run: |
@@ -63,8 +67,8 @@ jobs:
         if: ${{ inputs.package-type == 'artifact' }}
         uses: actions/upload-artifact@v4
         with:
-          name: artifact
-          path: '**/bin/Release/*'
+          name: WebApplication
+          path: 'WebApplication\obj\Release\Package\PackageTmp\*'
           retention-days: 7
 
       - name: Generate NuGet package
