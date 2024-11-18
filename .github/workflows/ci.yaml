@@ -67,12 +67,6 @@ jobs:
           path: '**/bin/Release/*'
           retention-days: 7
 
-      - name: Download artifact
-        if: ${{ inputs.package-type == 'artifact' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.project-name }}
-
       - name: Generate NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
         run: |
