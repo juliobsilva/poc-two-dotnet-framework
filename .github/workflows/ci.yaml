@@ -117,10 +117,10 @@ jobs:
           }
     
           # Copia os arquivos, sobrescrevendo se necessário
-          Copy-Item -Path "$sourcePath\*" -Destination $destinationPath -Recurse -Force
+          Move-Item -Path "$sourcePath\*" -Destination $destinationPath -Force
 
           # Importa o módulo do IIS e reinicia o app pool
           Import-Module WebAdministration
           Restart-WebAppPool -Name "DefaultAppPool"
-        } -ArgumentList "C:\webapp", "C:\inetpub\webapp"
+        } -ArgumentList "C:\webapp", "C:\inetpub"
 
