@@ -105,7 +105,7 @@ jobs:
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
         # Copia os arquivos para o servidor remoto
-        Copy-Item -Path "$env:GITHUB_WORKSPACE\WebApplication" -Destination "C:\webapp" -ToSession $session -Recurse
+        Copy-Item -Path "$env:GITHUB_WORKSPACE\artifact" -Destination "C:\webapp" -ToSession $session -Recurse
 
         # Executa os comandos remotamente
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
