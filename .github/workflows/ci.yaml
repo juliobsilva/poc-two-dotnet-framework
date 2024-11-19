@@ -107,16 +107,15 @@ jobs:
         # Copia os arquivos para o servidor remoto
         Copy-Item -Path "$env:GITHUB_WORKSPACE\artifact" -Destination "C:\webapp" -ToSession $session -Recurse
 
-        # Copia apenas os arquivos que mudaram ou não existem no destino
-        Get-ChildItem -Path $sourcePath -Recurse | ForEach-Object {
-        $relativePath = $_.FullName.Substring($sourcePath.Length).TrimStart('\')
-        $targetFile = Join-Path -Path $destinationPath -ChildPath $relativePath
-        
-        # Verifica se o arquivo precisa ser copiado (não existe ou foi modificado)
+        # Executa os comandos remotamente
+        Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
+          $relativePath = $_.FullName.Substring($sourcePath.Length).TrimStart('\')
+          $targetFile = Join-Path -Path $destinationPath -ChildPath $relativePath
+          
+          # Verifica se o arquivo precisa ser copiado (não existe ou foi modificado)
             if (!(Test-Path -Path $targetFile) -or (Get-FileHash $_.FullName).Hash -ne (Get-FileHash $targetFile).Hash) {
-                Copy-Item -Path $_.FullName -Destination $targetFile -Force
-            }
-        }
+              Copy-Item -Path $_.FullName -Destination $targetFile -Force
+          }
 
           # Importa o módulo do IIS e reinicia o app pool
           Import-Module WebAdministration
