@@ -44,7 +44,7 @@ jobs:
       - name: Build solution
         run: |
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
-          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:PublishProfile=FileSystem /p:PublishDir=publish/
+          & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FileSystem /p:PublishDir=publish/
 
       - name: Locate VSTest
         id: locate-vstest
