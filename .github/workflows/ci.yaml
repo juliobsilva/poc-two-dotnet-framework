@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: artifact
-          path: D:\publish\WebApplication
+          path: '**/obj/Release/*'
 
       - name: Generate NuGet package
         if: ${{ inputs.package-type == 'nuget' }}
