@@ -46,6 +46,23 @@ jobs:
           $msbuild = "${{ steps.locate-msbuild.outputs.msbuildPath }}"
           & "$msbuild" '${{ inputs.project-name }}/${{ inputs.project-name }}.sln' /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FileSystem /p:PublishUrl=D:\publish\WebApplication
 
+      - name: Create Publish Profile
+        shell: pwsh
+        run: |
+            $publishProfilesPath = "WebApplication/Properties/PublishProfiles"
+            New-Item -ItemType Directory -Force -Path $publishProfilesPath | Out-Null
+            $publishProfileContent = @"
+          <Project>
+            <PropertyGroup>
+              <WebPublishMethod>FileSystem</WebPublishMethod>
+              <PublishUrl>D:\publish\WebApplication</PublishUrl>
+              <DeleteExistingFiles>True</DeleteExistingFiles>
+            </PropertyGroup>
+          </Project>
+          "@
+              $publishProfileContent | Set-Content -Path "$publishProfilesPath/FileSystem.pubxml" -Force
+        
+
       - name: Locate VSTest
         id: locate-vstest
         run: |
