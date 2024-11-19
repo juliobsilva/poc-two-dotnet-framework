@@ -40,11 +40,6 @@ jobs:
         run: |
           $msbuildPath = (vswhere -latest -products * -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe')
           "msbuildPath=$msbuildPath" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
-
-      - name: Create Publish Profile
-        run: |
-          mkdir -p WebApplication/Properties/PublishProfiles
-          echo '<Project><PropertyGroup><WebPublishMethod>FileSystem</WebPublishMethod><PublishUrl>D:\publish\WebApplication</PublishUrl><DeleteExistingFiles>True</DeleteExistingFiles></PropertyGroup></Project>' > WebApplication/Properties/PublishProfiles/FileSystem.pubxml    
         
       - name: Build solution
         run: |
