@@ -111,13 +111,13 @@ jobs:
         Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
           param ($sourcePath, $destinationPath)
     
-          # Garante que o diretório de destino existe
-          if (!(Test-Path -Path $destinationPath)) {
-              New-Item -ItemType Directory -Path $destinationPath -Force
+          if (Test-Path $destinationPath) {
+            # Copiar apenas os arquivos, ignorando as pastas
+            Get-ChildItem -Path $sourcePath -Recurse | Where-Object { -not $_.PSIsContainer } | Copy-Item -Destination $destinationPath -Force
+          } else {
+              # Caso a pasta de destino não exista, copiar a estrutura inteira
+              Copy-Item -Path "$sourcePath\*" -Destination $destinationPath -Recurse -Force
           }
-    
-          # Copia os arquivos, sobrescrevendo se necessário
-          Copy-Item -Path "$sourcePath\*" -Destination $destinationPath -Recurse -Force
 
           # Importa o módulo do IIS e reinicia o app pool
           Import-Module WebAdministration
