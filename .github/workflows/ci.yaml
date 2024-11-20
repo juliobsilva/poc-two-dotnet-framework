@@ -105,24 +105,24 @@ jobs:
         $session = New-PSSession -ComputerName $env:IIS_SERVER -Credential $credential
 
         # Copia os arquivos para o servidor remoto
-        Copy-Item -Path "$env:GITHUB_WORKSPACE\artifact" -Destination "C:\inetpub\webapp" -ToSession $session -Recurse -Force
+        Copy-Item -Path "$env:GITHUB_WORKSPACE\artifact" -Destination "C:\webapp" -ToSession $session -Recurse -Force
 
-        # # Executa os comandos remotamente
-        # Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
-        #   param ($sourcePath, $destinationPath)
+        # Executa os comandos remotamente
+        Invoke-Command -ComputerName $env:IIS_SERVER -Credential $credential -ScriptBlock {
+          param ($sourcePath, $destinationPath)
     
-        #   # Garante que o diretório de destino existe
-        #   if (!(Test-Path -Path $destinationPath)) {
-        #       New-Item -ItemType Directory -Path $destinationPath -Force
-        #   }
+          # Garante que o diretório de destino existe
+          if (!(Test-Path -Path $destinationPath)) {
+              New-Item -ItemType Directory -Path $destinationPath -Force
+          }
           
-        #   Remove-Item -Path "$destinationPath\*" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "$destinationPath\*" -Recurse -Force -ErrorAction SilentlyContinue
 
-        #   # Copia os arquivos, sobrescrevendo se necessário
-        #   Move-Item -Path "$sourcePath\*" -Destination $destinationPath -Force
+          # Copia os arquivos, sobrescrevendo se necessário
+          Move-Item -Path "$sourcePath\*" -Destination $destinationPath -Force
 
-        #   # Importa o módulo do IIS e reinicia o app pool
-        #   Import-Module WebAdministration
-        #   Restart-WebAppPool -Name "DefaultAppPool"
-        # } -ArgumentList "C:\webapp", "C:\inetpub\webapp"
+          # Importa o módulo do IIS e reinicia o app pool
+          Import-Module WebAdministration
+          Restart-WebAppPool -Name "DefaultAppPool"
+        } -ArgumentList "C:\webapp", "C:\inetpub\webapp"
 
